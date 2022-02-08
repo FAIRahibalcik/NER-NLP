@@ -237,7 +237,7 @@ def NLP_results(doc, index_dict):
                 if ent._.lookup_name is not None:
                     name_list.append(ent._.lookup_name)
 
-    # lodpe = json.dumps(lodpe, default = myconverter)
+    lodpe = json.dumps(lodpe, default = myconverter)
     return(lodpe)
 
 print(NLP_results(document, name_id_dict))
