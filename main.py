@@ -9,7 +9,7 @@ from spacy.matcher import Matcher
 from spacy.tokens import Span
 
 comp_index = pd.read_csv(os.path.expanduser("~/Downloads/kospi200_info_v3_Ahmet.csv"))
-df_data = pd.read_parquet(os.path.expanduser("~/Downloads/NewsData_LG-Electronics.parquet"), engine="auto")
+df_data = pd.read_parquet(os.path.expanduser("~/Downloads/NewsData_Samsung-Electronics.parquet"), engine="auto")
 
 comp_index.eng_name_clean = comp_index.eng_name_clean.astype(str)
 clean_names = comp_index.eng_name_clean.tolist()
@@ -97,7 +97,7 @@ def NLP_results(doc, index_dict):
         for token in patterns[i]:
             another_list.append({"LOWER": token.text.lower()})
         final_pattern.append(another_list)
-        final_pattern.append([{"LOWER": "samsung"}])
+        #  (DEPRECATED) final_pattern.append([{"LOWER": "samsung"}])
         matcher.add(names[i].upper(), final_pattern)
         final_pattern = []
     matches = matcher(doc)
