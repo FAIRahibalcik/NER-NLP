@@ -214,7 +214,9 @@ class CustomNER(object):
 import time
 start = time.time()
 a = CustomNER()
+
 t = "Samsung SDI says virus outbreak in China will affect first-quarter earnings. By Reuters StaffFILE PHOTO: Samsung Electronics' Galaxy S7 is displayed at its shop in Seoul, South Korea, November 21, 2016. REUTERS/Kim Hong-JiSEOUL (Reuters) - South Korean battery maker Samsung SDI Co Ltd 006400.KS said on Thursday its first-quarter earnings could be negatively affected by a virus outbreak in China.The total number of confirmed deaths from the virus in China had risen by 38 to 170 as of Wednesday, and the number of infected patients had risen to over 7,700.Samsung SDI, an affiliate of South Korean tech giant Samsung Electronics Co Ltd 005930.KS, counts Volvo and Volkswagen VOWG_p.DE among its customers."
-for i in range(300):
-    mka = a.NLP_results(t, a.index_dict)
+mka = []
+for i in range(100):
+    mka.append(a.NLP_results(t, a.index_dict))
 print(time.time()-start)
