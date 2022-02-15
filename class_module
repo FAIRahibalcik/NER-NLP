@@ -27,6 +27,21 @@ class CustomNER(object):
         Span.set_extension("lookup_name", default=None)
         Span.set_extension("company_id", default=None)
 
+        # building up patterns and matcher
+        
+        names = [key for key in name_id_dict]
+        patterns = list(self.nlp.pipe(names))
+        final_pattern = []
+        self.matcher = Matcher(self.nlp.vocab)
+        for i in range(len(patterns)):
+            another_list = []
+            for token in patterns[i]:
+                another_list.append({"LOWER": token.text.lower()})
+            final_pattern.append(another_list)
+            #  (DEPRECATED) final_pattern.append([{"LOWER": "samsung"}])
+            self.matcher.add(names[i].upper(), final_pattern)
+            final_pattern = []
+
 
     def lowercase_translator(self, my_string):
             return my_string.lower().translate(str.maketrans('', '', string.punctuation))
@@ -59,22 +74,8 @@ class CustomNER(object):
 
         nlp = self.nlp
         doc = nlp(doc)
-        names = [key for key in index_dict]
-
-        # building up patterns and matcher
-
-        patterns = list(nlp.pipe(names))
-        final_pattern = []
-        matcher = Matcher(nlp.vocab)
-        for i in range(len(patterns)):
-            another_list = []
-            for token in patterns[i]:
-                another_list.append({"LOWER": token.text.lower()})
-            final_pattern.append(another_list)
-            #  (DEPRECATED) final_pattern.append([{"LOWER": "samsung"}])
-            matcher.add(names[i].upper(), final_pattern)
-            final_pattern = []
-        matches = matcher(doc)
+        
+        matches = self.matcher(doc)
 
         # setting extensions and deciding company attribute of recognized entities
 
