@@ -55,11 +55,6 @@ class CustomNER(object):
         self.nlp = spacy.load("en_core_web_trf", exclude=["tagger", "lemmatizer", "morphologizer", "textcat"])
 
 
-    def myconverter(self, obj):
-            if isinstance(obj, np.generic):
-                return obj.item()
-
-
     def lowercase_translator(self, my_string):
             return my_string.lower().translate(str.maketrans('', '', string.punctuation))
 
@@ -84,6 +79,10 @@ class CustomNER(object):
 
 
     def NLP_results(self, doc, index_dict):
+
+        def myconverter(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
 
         nlp = self.nlp
         doc = nlp(doc)
@@ -239,10 +238,10 @@ class CustomNER(object):
                     if ent._.lookup_name is not None:
                         name_list.append(ent._.lookup_name)
 
-        lodpe = json.dumps(lodpe, default = CustomNER.myconverter(self, obj=int64))
+        lodpe = json.dumps(lodpe, default = myconverter)
         return(lodpe)
 
 # print(NLP_results(document, name_id_dict))
 a = CustomNER()
-t = "LG TV Morphs From Flat Screen to Curved With Press of a Button. LAS VEGAS—You can buy a flat-screen TV or a curved one. But why not one that can do both? LG Display has your number. Here at CES, the Korean manufacturer is showing off a 4K OLED TV that can morph from a flat panel into a curved display with the press of a button. The concept TV flips between the two modes in about 5 seconds. It's a cool trick, and can let the viewer get a more immersive view and audio experience when the panel switches into the curved panel mode. LG Display envisions the concept TV for use in both home entertainment and on first-class airplane flights. A rep said the panel can bend back and forth about 35,000 times. The manufacturer built the TV using its bendable OLED Display technology, which it's been researching for years. At CES 2018, the same technology grabbed headlines when LG Display used it in a rollable 4K 65-inch TV, which rose up from a spindle. At this year's CES, the rollable display has returned, but it can now unfurl downwards like a movie projection screen. LG Display has been demonstrating the rollable concept as a convenient way for people to store and access a large TV whenever they need it. The company can't really say when any of these display concepts will hit the market; that's up to the vendors. LG Display is a separate business unit from LG Electronics and it refrains from selling products directly to consumers. Its focus is to sell to vendors, which can then put the technologies into their TVs, phones, laptops, and more. That said, CNET reports that LG Electronics plans on selling a rollable TV in the second or third quarter for a whopping $60,000. LG Display declined to discuss pricing, but said the technology is ready for production. At CES, the manufacturer also demonstrated other ways the company's bendable OLED panels can be used to help consumer electronics stand out. This included using it to create a foldable 13.3-inch tablet/laptop with a screen resolution of 1,536 by 2,048. What was interesting about the concept was how it also curved over the edge of the tablet to display notifications including the battery life, Wi-Fi connection signal, and the time. LG says the foldable panel will be ready for mass production next quarter. This newsletter may contain advertising, deals, or affiliate links. Subscribing to a newsletter indicates your consent to our Terms of Use and Privacy Policy. You may unsubscribe from the newsletters at any time."
+t = "Samsung SDI says virus outbreak in China will affect first-quarter earnings. By Reuters StaffFILE PHOTO: Samsung Electronics' Galaxy S7 is displayed at its shop in Seoul, South Korea, November 21, 2016. REUTERS/Kim Hong-JiSEOUL (Reuters) - South Korean battery maker Samsung SDI Co Ltd 006400.KS said on Thursday its first-quarter earnings could be negatively affected by a virus outbreak in China.The total number of confirmed deaths from the virus in China had risen by 38 to 170 as of Wednesday, and the number of infected patients had risen to over 7,700.Samsung SDI, an affiliate of South Korean tech giant Samsung Electronics Co Ltd 005930.KS, counts Volvo and Volkswagen VOWG_p.DE among its customers."
 print(a.NLP_results(t, a.index_dict))
