@@ -1,3 +1,4 @@
+from typing import Any
 import pandas as pd
 import numpy as np
 import re
@@ -54,12 +55,8 @@ class CustomNER(object):
 
 
     def myconverter(self, obj):
-            if isinstance(obj, np.integer):
-                return int(obj)
-            elif isinstance(obj, np.floating):
-                return float(obj)
-            elif isinstance(obj, np.ndarray):
-                return obj.tolist()
+            if isinstance(obj, np.generic):
+                return obj.item()
 
 
     def lowercase_translator(self, my_string):
@@ -86,8 +83,6 @@ class CustomNER(object):
 
 
     def NLP_results(self, doc, index_dict):
-
-        
 
         nlp = self.nlp
         doc = nlp(doc)
@@ -119,12 +114,12 @@ class CustomNER(object):
                 for match_id, start, end in matches:
                     if nlp.vocab.strings[match_id] in ent.text.lower():
                         ent._.is_company = "COMP"
-                    elif CustomNER.lowercase_translator(ent.text) in CustomNER.lowercase_translator(nlp.vocab.strings[match_id]):
+                    elif CustomNER.lowercase_translator(self, ent.text) in CustomNER.lowercase_translator(self, nlp.vocab.strings[match_id]):
                         ent._.is_company = "COMP"
-                    elif CustomNER.lowercase_translator(nlp.vocab.strings[match_id]) in CustomNER.lowercase_translator(ent.text):
+                    elif CustomNER.lowercase_translator(self, nlp.vocab.strings[match_id]) in CustomNER.lowercase_translator(self, ent.text):
                         ent._.is_company = "COMP"
 
-        a_list = CustomNER.det_comp_list(doc)
+        a_list = CustomNER.det_comp_list(self, doc)
 
         for ent in doc.ents:
             if ent.label_ == "ORG":
@@ -141,14 +136,14 @@ class CustomNER(object):
                     if self.nlp.vocab.strings[match_id] in ent.text.lower():
                         ent._.lookup_name = index_dict[nlp.vocab.strings[match_id]][1]
                         ent._.company_id = index_dict[nlp.vocab.strings[match_id]][0]
-                    elif CustomNER.lowercase_translator(nlp.vocab.strings[match_id]) in CustomNER.lowercase_translator(ent.text):
+                    elif CustomNER.lowercase_translator(self, nlp.vocab.strings[match_id]) in CustomNER.lowercase_translator(self, ent.text):
                         ent._.lookup_name = index_dict[nlp.vocab.strings[match_id]][1]
                         ent._.company_id = index_dict[nlp.vocab.strings[match_id]][0]
 
         # linking non-pronoun references to main company entity info (used a simple logic: longest is the best)
 
         while len(a_list) > 1:
-            long_comp = CustomNER.longest_company_name(a_list, doc)
+            long_comp = CustomNER.longest_company_name(self, a_list, doc)
             for elm in a_list:
                 if elm.text in long_comp.text and elm is not long_comp:
                     elm._.lookup_name = long_comp._.lookup_name
@@ -243,7 +238,7 @@ class CustomNER(object):
                     if ent._.lookup_name is not None:
                         name_list.append(ent._.lookup_name)
 
-        lodpe = json.dumps(lodpe, default = CustomNER.myconverter)
+        lodpe = json.dumps(lodpe, default = CustomNER.myconverter(self, obj=np.generic))
         return(lodpe)
 
 # print(NLP_results(document, name_id_dict))
