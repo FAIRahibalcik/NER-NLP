@@ -23,6 +23,9 @@ class CustomNER(object):
         self.entity_type = ["ORG", "PERSON", "PRODUCT", "GPE"]
 
         self.nlp = spacy.load("en_core_web_trf", exclude=["tagger", "lemmatizer", "morphologizer", "textcat"])
+        Span.set_extension("is_company", default=None)
+        Span.set_extension("lookup_name", default=None)
+        Span.set_extension("company_id", default=None)
 
 
     def lowercase_translator(self, my_string):
@@ -74,10 +77,6 @@ class CustomNER(object):
         matches = matcher(doc)
 
         # setting extensions and deciding company attribute of recognized entities
-
-        Span.set_extension("is_company", default=None, force=True)
-        Span.set_extension("lookup_name", default=None, force=True)
-        Span.set_extension("company_id", default=None, force=True)
 
         for ent in doc.ents:
             if ent.label_ == "ORG":
