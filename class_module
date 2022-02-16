@@ -205,6 +205,7 @@ class CustomNER(object):
                         dict_per_ent["parent_sent_i"] = freq_dict[ent.text][1]
                         dict_per_ent["ratio_wrt_all_sent"] = freq_dict[ent.text][2]
                         dict_per_ent["ratio_wrt_ent_sent"] = freq_dict[ent.text][3]
+                        dict_per_ent["ratio_wrt_comp_sent"] = None
                     lodpe.append(dict_per_ent)
                     name_list.append(ent.text)
                     if ent._.lookup_name is not None:
@@ -221,3 +222,4 @@ t = "Samsung SDI says virus outbreak in China will affect first-quarter earnings
 for i in range(100):
     mka = a.NLP_results(t, a.index_dict)
 print(time.time()-start)
+print(mka)
