@@ -213,6 +213,7 @@ class CustomNER(object):
         lodpe = json.dumps(lodpe, default = myconverter)
         return(lodpe)
 
+#testkit
 import time
 start = time.time()
 a = CustomNER()
