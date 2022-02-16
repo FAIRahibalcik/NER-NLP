@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import string
 import os
-import re
+# import re
 import json
 import spacy
 from spacy.matcher import Matcher
@@ -43,27 +43,27 @@ class CustomNER(object):
             self.matcher.add(names[i].upper(), final_pattern)
             final_pattern = []
 
-    # preprocessing in progress
+    # # preprocessing in progress
 
-    def extract4sentence(self, text):
-        eng = re.compile('[\n]')
-        result = eng.sub(' ', text)
-        result = ' '.join(result.split())
-        return result
+    # def extract4sentence(self, text):
+    #     eng = re.compile('[\n]')
+    #     result = eng.sub(' ', text)
+    #     result = ' '.join(result.split())
+    #     return result
 
 
-    def simp_preprop(self, df):
-        print('Removing missing values...')
-        df = df[~df['summary'].isna()].reset_index()
+    # def simp_preprop(self, df):
+    #     print('Removing missing values...')
+    #     df = df[~df['summary'].isna()].reset_index()
 
-        print('Preprocessing...')
-        contents = df.title + '.\n' + df.summary
-        df['contents'] = contents.apply(lambda x: CustomNER.extract4sentence(x))
+    #     print('Preprocessing...')
+    #     contents = df.title + '.\n' + df.summary
+    #     df['contents'] = contents.apply(lambda x: CustomNER.extract4sentence(x))
 
-        # sentseg = spacy.load("en_core_web_md")
-        # df['contents'] = df['contents'].apply(lambda x : '. '.join([x.text for x in sentseg(x).sents]))
+    #     # sentseg = spacy.load("en_core_web_md")
+    #     # df['contents'] = df['contents'].apply(lambda x : '. '.join([x.text for x in sentseg(x).sents]))
 
-        return df
+    #     return df
 
     def lowercase_translator(self, my_string):
             return my_string.lower().translate(str.maketrans('', '', string.punctuation))
