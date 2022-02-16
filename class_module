@@ -1,7 +1,8 @@
 import pandas as pd
 import string
 import os
-import pickle
+import numpy
+import json
 import spacy
 from spacy.matcher import Matcher
 from spacy.tokens import Span
@@ -22,6 +23,7 @@ class CustomNER(object):
         self.entity_type = ["ORG", "PERSON", "PRODUCT", "GPE"]
 
         self.nlp = spacy.load("en_core_web_trf", exclude=["tagger", "lemmatizer", "morphologizer", "textcat"])
+        
         Span.set_extension("is_company", default=None)
         Span.set_extension("lookup_name", default=None)
         Span.set_extension("company_id", default=None)
@@ -31,15 +33,16 @@ class CustomNER(object):
         names = [key for key in name_id_dict]
         patterns = list(self.nlp.pipe(names))
         final_pattern = []
-        self.matcher = Matcher(self.nlp.vocab)
+        matcher = Matcher(self.nlp.vocab)
         for i in range(len(patterns)):
             another_list = []
             for token in patterns[i]:
                 another_list.append({"LOWER": token.text.lower()})
             final_pattern.append(another_list)
             #  (DEPRECATED) final_pattern.append([{"LOWER": "samsung"}])
-            self.matcher.add(names[i].upper(), final_pattern)
+            matcher.add(names[i].upper(), final_pattern)
             final_pattern = []
+        self.matcher = matcher
 
     
     def lowercase_translator(self, my_string):
@@ -66,6 +69,10 @@ class CustomNER(object):
 
 
     def NLP_results(self, doc, index_dict):
+
+        def myconverter(obj):
+            if isinstance(obj, numpy.generic):
+                return obj.item()
 
         nlp = self.nlp
         doc = nlp(doc)
@@ -203,15 +210,13 @@ class CustomNER(object):
                     if ent._.lookup_name is not None:
                         name_list.append(ent._.lookup_name)
 
-        lodpe = pickle.dumps(lodpe)
+        lodpe = json.dumps(lodpe, default = myconverter)
         return(lodpe)
 
 import time
 start = time.time()
 a = CustomNER()
 t = "Samsung SDI says virus outbreak in China will affect first-quarter earnings. By Reuters StaffFILE PHOTO: Samsung Electronics' Galaxy S7 is displayed at its shop in Seoul, South Korea, November 21, 2016. REUTERS/Kim Hong-JiSEOUL (Reuters) - South Korean battery maker Samsung SDI Co Ltd 006400.KS said on Thursday its first-quarter earnings could be negatively affected by a virus outbreak in China.The total number of confirmed deaths from the virus in China had risen by 38 to 170 as of Wednesday, and the number of infected patients had risen to over 7,700.Samsung SDI, an affiliate of South Korean tech giant Samsung Electronics Co Ltd 005930.KS, counts Volvo and Volkswagen VOWG_p.DE among its customers."
-mka = []
 for i in range(100):
-    mka.append(a.NLP_results(t, a.index_dict))
-print(mka[0])
+    mka = a.NLP_results(t, a.index_dict)
 print(time.time()-start)
