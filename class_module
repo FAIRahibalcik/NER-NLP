@@ -45,7 +45,6 @@ class CustomNER(object):
 
     # preprocessing in progress
 
-
     def extract4sentence(self, text):
         eng = re.compile('[\n]')
         result = eng.sub(' ', text)
