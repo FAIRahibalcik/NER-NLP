@@ -1,16 +1,14 @@
 import pandas as pd
-import numpy as np
 import string
 import os
-# import re
-import json
+import pickle
 import spacy
 from spacy.matcher import Matcher
 from spacy.tokens import Span
 
 class CustomNER(object):
     def __init__(self):
-        self.comp_index = pd.read_csv(os.path.expanduser("~/Downloads/kospi200_info_v3_Ahmet.csv"))
+        self.comp_index = pd.read_csv(os.path.expanduser("~/Downloads/kospi200_info_v4_company_table.csv"))
         self.comp_index.eng_name_clean = self.comp_index.eng_name_clean.astype(str)
         self.clean_names = self.comp_index.eng_name_clean.tolist()
 
@@ -43,28 +41,7 @@ class CustomNER(object):
             self.matcher.add(names[i].upper(), final_pattern)
             final_pattern = []
 
-    # # preprocessing in progress
-
-    # def extract4sentence(self, text):
-    #     eng = re.compile('[\n]')
-    #     result = eng.sub(' ', text)
-    #     result = ' '.join(result.split())
-    #     return result
-
-
-    # def simp_preprop(self, df):
-    #     print('Removing missing values...')
-    #     df = df[~df['summary'].isna()].reset_index()
-
-    #     print('Preprocessing...')
-    #     contents = df.title + '.\n' + df.summary
-    #     df['contents'] = contents.apply(lambda x: CustomNER.extract4sentence(x))
-
-    #     # sentseg = spacy.load("en_core_web_md")
-    #     # df['contents'] = df['contents'].apply(lambda x : '. '.join([x.text for x in sentseg(x).sents]))
-
-    #     return df
-
+    
     def lowercase_translator(self, my_string):
             return my_string.lower().translate(str.maketrans('', '', string.punctuation))
 
@@ -89,10 +66,6 @@ class CustomNER(object):
 
 
     def NLP_results(self, doc, index_dict):
-
-        def myconverter(obj):
-            if isinstance(obj, np.generic):
-                return obj.item()
 
         nlp = self.nlp
         doc = nlp(doc)
@@ -230,7 +203,7 @@ class CustomNER(object):
                     if ent._.lookup_name is not None:
                         name_list.append(ent._.lookup_name)
 
-        lodpe = json.dumps(lodpe, default = myconverter)
+        lodpe = pickle.dumps(lodpe)
         return(lodpe)
 
 import time
@@ -240,4 +213,5 @@ t = "Samsung SDI says virus outbreak in China will affect first-quarter earnings
 mka = []
 for i in range(100):
     mka.append(a.NLP_results(t, a.index_dict))
+print(mka[0])
 print(time.time()-start)
