@@ -222,4 +222,3 @@ t = "Samsung SDI says virus outbreak in China will affect first-quarter earnings
 for i in range(100):
     mka = a.NLP_results(t, a.index_dict)
 print(time.time()-start)
-print(mka)
